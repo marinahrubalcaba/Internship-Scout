@@ -8,3 +8,8 @@ venv/
 
 # macOS
 .DS_Store
+
+# windows 
+Thumbs.db
+Desktop.ini
+EOF
