@@ -14,42 +14,9 @@ interface JobResult {
   company: string;
   location: string;
   score: number;
-  fit_reason: string;
+  explanation: string;
   apply_url: string;
 }
-
-// mock data for testing, delete once api is running
-const MOCK_RESULTS: JobResult[] = [
-  {
-    id: '1',
-    title: 'Software QA & Automation Intern',
-    company: 'CloudScale Systems',
-    location: 'Irvine, CA (Hybrid)',
-    score: 94,
-    fit_reason: 'Matches your testing interest with hands-on automated regression work in Python and pytest.',
-    apply_url: 'https://www.google.com/about/careers/applications/',
-  },
-  {
-    id: '2',
-    title: 'Machine Learning Engineering Intern',
-    company: 'Apex AI Labs',
-    location: 'Remote',
-    score: 86,
-    fit_reason: 'Great fit for your Python background, focusing on training and evaluating classification models.',
-    apply_url: 'https://www.google.com/about/careers/applications/',
-  },
-  {
-    id: '3',
-    title: 'Data Science Intern',
-    company: 'CivicData Corp',
-    location: 'Los Angeles, CA',
-    score: 72,
-    fit_reason: 'Centers on SQL querying and Python data cleaning, building solid data pipeline experience.',
-    apply_url: 'https://www.google.com/about/careers/applications/',
-  },
-];
-
-/* main page component */
 
 export default function InternshipScoutPage() {
   // state variables to manage user input, loading state, and results
@@ -115,12 +82,27 @@ export default function InternshipScoutPage() {
     setLoading(true);
     setHasSearched(true);
 
-    // set timeout 
-    setTimeout(() => {
-      setTargetRoles(finalInterests.map((item) => `${item} Intern`));
-      setResults(MOCK_RESULTS);
+    try {
+      // make API call to backend with major and interests
+      const response = await fetch('http://127.0.0.1:8000/InternshipScout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ major, interests: finalInterests }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+
+      setResults(data.results || []);
+      setTargetRoles(data.search_terms?.job_titles || []);
+    } catch (error) {
+      console.error('Error fetching internships:', error);
+    } finally {
       setLoading(false);
-    }, 900);
+    }
   };
 
   // this is where the UI components begin
@@ -223,7 +205,7 @@ export default function InternshipScoutPage() {
                 <Divider sx={{ my: 1.5 }} />
 
                 <Typography variant="body2" sx={{ color: '#334155', lineHeight: 1.6 }}>
-                  <strong>Why it fits:</strong> {job.fit_reason}
+                  <strong>Why it fits:</strong> {job.explanation}
                 </Typography>
               </CardContent>
 
