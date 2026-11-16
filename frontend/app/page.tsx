@@ -11,11 +11,12 @@ import RestartAltRoundedIcon from '@mui/icons-material/RestartAltRounded';
 interface JobResult {
   id: string;
   title: string;
-  company: string;
-  location: string;
+   // company: string;
+  // location: string;
+  description: string;
+  link: string;
   score: number;
   explanation: string;
-  apply_url: string;
 }
 
 export default function InternshipScoutPage() {
@@ -198,11 +199,12 @@ export default function InternshipScoutPage() {
                   <Chip label={`${job.score}% Match`} color={job.score >= 85 ? 'success' : job.score >= 70 ? 'primary' : 'default'} size="small" sx={{ fontWeight: 'bold' }} />
                 </Box>
 
-                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-                  {job.company} • {job.location}
-                </Typography>
-
+  
                 <Divider sx={{ my: 1.5 }} />
+
+                <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5, lineHeight: 1.5 }}>
+                  {job.description}
+                </Typography>
 
                 <Typography variant="body2" sx={{ color: '#334155', lineHeight: 1.6 }}>
                   <strong>Why it fits:</strong> {job.explanation}
@@ -210,7 +212,7 @@ export default function InternshipScoutPage() {
               </CardContent>
 
               <CardActions sx={{ px: 2, pb: 2 }}>
-                <Button size="small" variant="outlined" href={job.apply_url} target="_blank" rel="noopener noreferrer" endIcon={<OpenInNewRoundedIcon fontSize="small" />}
+                <Button size="small" variant="outlined" href={job.link} target="_blank" rel="noopener noreferrer" endIcon={<OpenInNewRoundedIcon fontSize="small" />}
                   sx={{ textTransform: 'none', borderRadius: 1.5, fontWeight: 600 }}>
                   Apply on Company Site
                 </Button>
