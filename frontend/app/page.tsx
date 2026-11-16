@@ -11,9 +11,9 @@ import RestartAltRoundedIcon from '@mui/icons-material/RestartAltRounded';
 interface JobResult {
   id: string;
   title: string;
-   // company: string;
-  // location: string;
-  description: string;
+   // company: string; will add back
+  // location: string; will add back
+  summary: string;
   link: string;
   score: number;
   explanation: string;
@@ -125,7 +125,7 @@ export default function InternshipScoutPage() {
         {/* Form section to take in user input of major */}
         <Paper elevation={0} sx={{ p: { xs: 3, sm: 4 }, mb: 4, borderRadius: 3, bgcolor: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(8px)', border: '1px solid #dce4ec', boxShadow: '0 8px 24px rgba(15, 23, 42, 0.05)' }}>
           <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-            <TextField label="What's your major?" placeholder="e.g., Computer Science" value={major} onChange={(e) => setMajor(e.target.value)} helperText="*This field is required." required fullWidth />
+            <TextField label="What's your major?" placeholder="ex: Computer Science, Data Science" value={major} onChange={(e) => setMajor(e.target.value)} helperText="*This field is required." required fullWidth />
             <Box>
               <Box sx={{ display: 'flex', gap: 1.5 }}>
                 <TextField label={interests.length >= 3 ? 'Max 3 interests added' : `Add an interest (max 3 interests)`}
@@ -199,11 +199,15 @@ export default function InternshipScoutPage() {
                   <Chip label={`${job.score}% Match`} color={job.score >= 85 ? 'success' : job.score >= 70 ? 'primary' : 'default'} size="small" sx={{ fontWeight: 'bold' }} />
                 </Box>
 
-  
+                {/* <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1.5, fontweight: 500 }}>
+                  {job.company} • {job.location}
+                </Typography>
+                */}
+
                 <Divider sx={{ my: 1.5 }} />
 
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 1.5, lineHeight: 1.5 }}>
-                  {job.description}
+                  <strong>Job Summary:</strong> {job.summary}
                 </Typography>
 
                 <Typography variant="body2" sx={{ color: '#334155', lineHeight: 1.6 }}>
