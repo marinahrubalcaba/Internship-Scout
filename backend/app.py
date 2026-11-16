@@ -104,10 +104,11 @@ def rank_internships(job_posts, major, interests):
         "You are an internship scout ranking internships for a student.\n"
         "Your task is to rank internships based on their relevance to the student's major and interests.\n"
         "Score each internship from 0 to 100 based on how well it aligns with the student's major and interests.\n"
-        "Additionally, provide a brief explanation for each score. Keep it limited to 50 characters.\n"
-        "Output the rankings in raw JSON only in the format:\n"
+        "Provide a professional, yet straightforward, summary of the role based on the job description\n"
+        "Provide a detailed, personalized explanation of specifically how this role aligns with the student's major and interests. Keep it limited to 1-2 sentences. Avoid generalizing.\n"
+        "Output the rankings in raw JSON ONLY. No additional text. The format is:\n"
         "[\n"
-        "  {\"id\": 1, \"score\": 85, \"explanation\": \"Relevant to major and interests\"}\n"
+        "  {\"id\": 1, \"score\": 85,\"summary\": \"up to max 150 words overview...\", \"explanation\": \"relevant to major and interests because the day to day duties align with...\"}\n"
         "]"
     )
 
@@ -131,6 +132,11 @@ def rank_internships(job_posts, major, interests):
     for job in job_posts:
         matched = rankings_map.get(str(job.get("id")), {})
         job["score"] = int(matched.get("score", 0))
+        job["summary"] = matched.get("summary", "No job summary available.")
+
+        if matched.get("summary"):
+            job["description"] = matched.get("summary")
+
         job["explanation"] = matched.get("explanation", "Good match based on your major and interests.")
 
     job_posts.sort(key=lambda x: x.get("score", 0), reverse=True)
