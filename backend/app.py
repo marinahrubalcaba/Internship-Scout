@@ -1,5 +1,6 @@
 import os
 import json
+import requests
 from dotenv import load_dotenv
 from openai import OpenAI
 from flask import Flask, request, jsonify
@@ -55,13 +56,45 @@ def generate_jobs(major, interests):
     jobs = clean_json(response.choices[0].message.content)
     return jobs
 
-# ------------- serpAPI function will go here -------------
- # def fetch_internships(job_titles):
-    # implement function 
+# Get internship postings from SerpAPI using the job titles from the first AI prompt.
+def fetch_internships(job_titles):
+    serpapi_key = os.getenv("SERPAPI_API_KEY")
+    if not serpapi_key:
+        raise RuntimeError("SERPAPI_API_KEY is missing from .env.")
 
+    internships = []
 
+    for job_title in job_titles:
+        try:
+            response = requests.get(
+                "https://serpapi.com/search.json",
+                params={
+                    "engine": "google_jobs",
+                    "q": job_title,
+                    "api_key": serpapi_key,
+                },
+                timeout=30,
+            )
+        except requests.RequestException:
+            raise RuntimeError("Could not connect to SerpAPI.") from None
 
+        if response.status_code != 200:
+            raise RuntimeError(
+                f"SerpAPI search failed with status {response.status_code}."
+            )
 
+        for job in response.json().get("jobs_results", []):
+            apply_options = job.get("apply_options") or []
+            link = apply_options[0].get("link") if apply_options else None
+
+            internships.append({
+                "id": len(internships) + 1,
+                "title": job.get("title", ""),
+                "description": job.get("description", ""),
+                "link": link,
+            })
+
+    return internships
 
 
 
