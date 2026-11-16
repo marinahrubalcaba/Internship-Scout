@@ -63,6 +63,7 @@ def fetch_internships(job_titles):
         raise RuntimeError("SERPAPI_API_KEY is missing from .env.")
 
     internships = []
+    seen_jobs = set()
 
     for job_title in job_titles:
         try:
@@ -86,6 +87,12 @@ def fetch_internships(job_titles):
         for job in response.json().get("jobs_results", []):
             apply_options = job.get("apply_options") or []
             link = apply_options[0].get("link") if apply_options else None
+
+            job_key = job.get("job_id") or link
+            if job_key:
+                if job_key in seen_jobs:
+                    continue
+                seen_jobs.add(job_key)
 
             internships.append({
                 "id": len(internships) + 1,
